@@ -38,7 +38,8 @@ func TestGetFunctionDefination(t *testing.T) {
 }`
 
 	//regexPattern := fmt.Sprintf(`(?s)^func(?:\s*\(([^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?s:.*?)\}`, regexp.QuoteMeta("a"))
-	regexPattern := fmt.Sprintf(`func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("a"))
+	//regexPattern := fmt.Sprintf(`func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("a"))
+	regexPattern := fmt.Sprintf(`(?s)func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\(.*?\).*?\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("a"))
 	re := regexp.MustCompile(regexPattern)
 
 	matches := re.FindStringSubmatch(string(case0))
@@ -51,11 +52,28 @@ func TestGetFunctionDefination(t *testing.T) {
 	http.HandleFunc("/products/", productsHandler)
 }`
 
-	regexPattern = fmt.Sprintf(`func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("registerRoutes2"))
+	//regexPattern = fmt.Sprintf(`func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("registerRoutes2"))
 	//regexPattern = fmt.Sprintf(`(?s)^func(?:\s*\(([^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?s:.*?)\}`, regexp.QuoteMeta("registerRoutes2"))
+	regexPattern = fmt.Sprintf(`(?s)func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\(.*?\).*?\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("registerRoutes2"))
 	re = regexp.MustCompile(regexPattern)
 	matches = re.FindStringSubmatch(string(case1))
 
 	t.Log(matches[0])
 
+	case2 := `func registerRoutes2(
+
+	xx func(http.Handler) http.Handler,
+	yy func(http.Handler) http.Handler,
+	mw ...func(http.Handler) http.Handler,
+) http.Handler {
+	http.HandleFunc("/health", healthCheckHandler)
+	http.HandleFunc("/products", productsHandler)
+	http.HandleFunc("/products/", productsHandler)
+}`
+
+	regexPattern = fmt.Sprintf(`(?s)func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\(.*?\).*?\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta("registerRoutes2"))
+	re = regexp.MustCompile(regexPattern)
+	matches = re.FindStringSubmatch(string(case2))
+
+	t.Log(matches[0])
 }

@@ -67,7 +67,7 @@ func getFunctionDefination(filePath, funcName string) (string, int, error) {
 		log.Fatalf("Error reading source file %s: %v", filePath, err)
 	}
 
-	regexPattern := fmt.Sprintf(`func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\([^)]*\)(?:\s*(?:[a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)*|\([^)]*\)))?\s*\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta(funcName))
+	regexPattern := fmt.Sprintf(`(?s)func(?:\s*\((?P<receiver>[^)]+)\))?\s+(%s\w*)\s*\(.*?\).*?\{(?P<body>[\s\S]*?)\n\}\s*(?:$|\n)`, regexp.QuoteMeta(funcName))
 
 	re := regexp.MustCompile(regexPattern)
 
@@ -189,7 +189,7 @@ func recQueryfuncs(filePath string, funcName string, level int) ([]string, error
 		// 4. ask gopls where are them
 		fp, _, _, err := getGoplsDefinition(filePath, r+linenum, c)
 		if err != nil {
-			fmt.Printf("error when getGoplsDefinition: %+v\n", err)
+			fmt.Printf("error when getGoplsDefinition for sym %s: %+v\n", s, err)
 		}
 
 		// 5. call the next level
