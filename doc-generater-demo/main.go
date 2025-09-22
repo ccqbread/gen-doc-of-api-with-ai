@@ -271,6 +271,6 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("doc for endpoint %s:\n%s\n", ep.Endpoint, doc)
+		fmt.Printf("==============\n==============\ndoc for endpoint %s:\n%s\n==============\n==============\n", ep.Endpoint, doc)
 	}
 }
